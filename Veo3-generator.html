@@ -1,0 +1,536 @@
+Veo3-generator.html
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veo 3 JSON Prompt Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        min-height: 600px;
+    }
+
+    .form-section {
+        padding: 40px;
+        background: white;
+    }
+
+    .output-section {
+        padding: 40px;
+        background: #f8f9fa;
+        border-left: 1px solid #e9ecef;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e1e5e9;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #4facfe;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .checkbox-item:hover {
+        border-color: #4facfe;
+        background: rgba(79, 172, 254, 0.05);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: auto;
+        margin-right: 10px;
+        accent-color: #4facfe;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #4facfe;
+    }
+
+    .output-container {
+        background: #2d3748;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .json-output {
+        color: #e2e8f0;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .copy-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #4facfe;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .copy-btn:hover {
+        background: #3182ce;
+        transform: translateY(-2px);
+    }
+
+    .copy-btn.copied {
+        background: #38a169;
+    }
+
+    .generate-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .generate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
+    }
+
+    .slider-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .slider {
+        flex: 1;
+        -webkit-appearance: none;
+        height: 6px;
+        border-radius: 3px;
+        background: #e1e5e9;
+        outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #4facfe;
+        cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #4facfe;
+        cursor: pointer;
+        border: none;
+    }
+
+    .slider-value {
+        font-weight: 600;
+        color: #4facfe;
+        min-width: 40px;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .content {
+            grid-template-columns: 1fr;
+        }
+        
+        .output-section {
+            border-left: none;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+        }
+    }
+
+    .json-key {
+        color: #81c784;
+    }
+
+    .json-string {
+        color: #ffb74d;
+    }
+
+    .json-number {
+        color: #64b5f6;
+    }
+
+    .json-boolean {
+        color: #f06292;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Veo 3 JSON Prompt Generator</h1>
+            <p>Create structured prompts for Google's Veo 3 video generation model</p>
+        </div>
+
+```
+    <div class="content">
+        <div class="form-section">
+            <div class="section-title">Video Configuration</div>
+            
+            <div class="form-group">
+                <label for="prompt">Main Prompt *</label>
+                <textarea id="prompt" placeholder="A cinematic shot of a majestic eagle soaring through misty mountains at sunrise..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Duration (seconds)</label>
+                <div class="slider-container">
+                    <input type="range" id="duration" class="slider" min="1" max="60" value="10">
+                    <span class="slider-value" id="duration-value">10</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="aspect-ratio">Aspect Ratio</label>
+                <select id="aspect-ratio">
+                    <option value="16:9">16:9 (Widescreen)</option>
+                    <option value="9:16">9:16 (Vertical/Mobile)</option>
+                    <option value="1:1">1:1 (Square)</option>
+                    <option value="4:3">4:3 (Traditional)</option>
+                    <option value="21:9">21:9 (Ultra-wide)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="quality">Quality Level</label>
+                <select id="quality">
+                    <option value="standard">Standard</option>
+                    <option value="high" selected>High</option>
+                    <option value="ultra">Ultra</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="style">Visual Style</label>
+                <select id="style">
+                    <option value="">Auto (Default)</option>
+                    <option value="cinematic">Cinematic</option>
+                    <option value="photorealistic">Photorealistic</option>
+                    <option value="animation">Animation</option>
+                    <option value="documentary">Documentary</option>
+                    <option value="artistic">Artistic</option>
+                    <option value="vintage">Vintage</option>
+                    <option value="futuristic">Futuristic</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="camera-movement">Camera Movement</label>
+                <select id="camera-movement">
+                    <option value="">None/Static</option>
+                    <option value="pan-left">Pan Left</option>
+                    <option value="pan-right">Pan Right</option>
+                    <option value="tilt-up">Tilt Up</option>
+                    <option value="tilt-down">Tilt Down</option>
+                    <option value="zoom-in">Zoom In</option>
+                    <option value="zoom-out">Zoom Out</option>
+                    <option value="dolly-forward">Dolly Forward</option>
+                    <option value="dolly-backward">Dolly Backward</option>
+                    <option value="orbit">Orbit</option>
+                    <option value="handheld">Handheld</option>
+                </select>
+            </div>
+
+            <div class="section-title" style="margin-top: 40px;">Advanced Options</div>
+
+            <div class="form-group">
+                <label for="seed">Seed (for reproducibility)</label>
+                <input type="number" id="seed" placeholder="Leave empty for random">
+            </div>
+
+            <div class="form-group">
+                <label for="negative-prompt">Negative Prompt</label>
+                <textarea id="negative-prompt" placeholder="blur, distortion, low quality, watermark..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Enhancement Options</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="motion-blur" value="motion_blur">
+                        <label for="motion-blur">Motion Blur</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="depth-of-field" value="depth_of_field">
+                        <label for="depth-of-field">Depth of Field</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="dynamic-lighting" value="dynamic_lighting">
+                        <label for="dynamic-lighting">Dynamic Lighting</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enhanced-details" value="enhanced_details">
+                        <label for="enhanced-details">Enhanced Details</label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="generate-btn" onclick="generateJSON()">Generate JSON Prompt</button>
+        </div>
+        
+        <div class="output-section">
+            <div class="section-title">Generated JSON</div>
+            <div class="output-container">
+                <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+                <div class="json-output" id="json-output">
+```
+
+{
+<span class="json-key">“prompt”</span>: <span class="json-string">“Enter your prompt details to generate JSON…”</span>,
+<span class="json-key">“duration”</span>: <span class="json-number">10</span>,
+<span class="json-key">“aspect_ratio”</span>: <span class="json-string">“16:9”</span>,
+<span class="json-key">“quality”</span>: <span class="json-string">“high”</span>
+}
+</div>
+</div>
+
+```
+            <div class="section-title" style="margin-top: 30px;">Usage Tips</div>
+            <div style="background: white; padding: 20px; border-radius: 10px; font-size: 0.9rem; line-height: 1.6;">
+                <p><strong>Best Practices:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Be specific and descriptive in your main prompt</li>
+                    <li>Include lighting, mood, and atmosphere details</li>
+                    <li>Specify camera angles and shot types</li>
+                    <li>Use the negative prompt to avoid unwanted elements</li>
+                    <li>Experiment with different aspect ratios for your use case</li>
+                    <li>Higher quality settings take longer but produce better results</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update duration slider value display
+    const durationSlider = document.getElementById('duration');
+    const durationValue = document.getElementById('duration-value');
+    
+    durationSlider.addEventListener('input', function() {
+        durationValue.textContent = this.value;
+    });
+
+    function generateJSON() {
+        const prompt = document.getElementById('prompt').value.trim();
+        const duration = parseInt(document.getElementById('duration').value);
+        const aspectRatio = document.getElementById('aspect-ratio').value;
+        const quality = document.getElementById('quality').value;
+        const style = document.getElementById('style').value;
+        const cameraMovement = document.getElementById('camera-movement').value;
+        const seed = document.getElementById('seed').value;
+        const negativePrompt = document.getElementById('negative-prompt').value.trim();
+        
+        // Get enhancement options
+        const enhancements = [];
+        document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            enhancements.push(checkbox.value);
+        });
+
+        // Build the JSON object
+        const jsonData = {
+            prompt: prompt || "A beautiful cinematic scene",
+            duration: duration,
+            aspect_ratio: aspectRatio,
+            quality: quality
+        };
+
+        if (style) {
+            jsonData.style = style;
+        }
+
+        if (cameraMovement) {
+            jsonData.camera_movement = cameraMovement;
+        }
+
+        if (seed) {
+            jsonData.seed = parseInt(seed);
+        }
+
+        if (negativePrompt) {
+            jsonData.negative_prompt = negativePrompt;
+        }
+
+        if (enhancements.length > 0) {
+            jsonData.enhancements = enhancements;
+        }
+
+        // Add metadata
+        jsonData.model = "veo-3";
+        jsonData.generated_at = new Date().toISOString();
+
+        // Format and display the JSON
+        const formattedJSON = JSON.stringify(jsonData, null, 2);
+        const syntaxHighlightedJSON = syntaxHighlight(formattedJSON);
+        document.getElementById('json-output').innerHTML = syntaxHighlightedJSON;
+    }
+
+    function syntaxHighlight(json) {
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            let cls = 'json-number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'json-key';
+                } else {
+                    cls = 'json-string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'json-boolean';
+            } else if (/null/.test(match)) {
+                cls = 'json-null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+
+    function copyToClipboard() {
+        const jsonOutput = document.getElementById('json-output');
+        const textToCopy = jsonOutput.textContent || jsonOutput.innerText;
+        
+        navigator.clipboard.writeText(textToCopy).then(function() {
+            const copyBtn = document.querySelector('.copy-btn');
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = 'Copied!';
+            copyBtn.classList.add('copied');
+            
+            setTimeout(function() {
+                copyBtn.textContent = originalText;
+                copyBtn.classList.remove('copied');
+            }, 2000);
+        });
+    }
+
+    // Generate initial JSON on page load
+    window.addEventListener('load', generateJSON);
+    
+    // Auto-generate JSON when form fields change
+    document.addEventListener('change', generateJSON);
+    document.addEventListener('input', generateJSON);
+</script>
+```
+
+</body>
+</html>
